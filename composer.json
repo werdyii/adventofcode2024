@@ -1,0 +1,40 @@
+{
+    "name": "werdy/aoc2024",
+    "description": "Advent of Code 2024 in PHP ;-)",
+    "type" : "project",
+    "authors": [
+        {
+            "name": "Gusepe Werdy",
+            "email": "gusepe.werdy@gmail.com"
+        }
+    ],
+    "require": {
+        "illuminate/collections": "^11.34",
+        "illuminate/support": "^11.34"
+    },
+    "require-dev": {
+        "laravel/pint": "^1.18",
+        "pestphp/pest": "^3.6"
+    },
+    "autoload": {
+        "psr-4": {
+            "Werdy\\AdventOfCode2024\\": "src/"
+        }
+    },
+    "autoload-dev":{
+        "psr-4":{
+            "Werdy\\AdventOfCode2024\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "test": "phpunit tests",
+        "pest": "./vendor/bin/pest tests --colors",
+        "lint": "./vendor/bin/pint",
+        "solve": "Werdy\\AdventOfCode2024\\Solver::solve"
+    },
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    }
+}
