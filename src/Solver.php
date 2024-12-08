@@ -4,6 +4,8 @@ namespace Werdy\AdventOfCode2024;
 
 use Illuminate\Support\Collection;
 
+require __DIR__.'/../vendor/autoload.php';
+
 class Solver
 {
     public static function solve(\Composer\Script\Event $event): void

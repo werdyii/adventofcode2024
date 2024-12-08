@@ -12,7 +12,21 @@ class Puzzle1
         $input = file_get_contents(__DIR__.'/'.$fileName)
             ?: throw new Exception('Failed to read input file.');
 
-        // TODO: Solve puzzle 1.
-        return new Collection(explode("\n", $input));
+
+        $data = (new Collection(explode("\n", $input)))
+            ->map(fn($line) => array_map('intval', explode("   ", trim($line))));
+
+        // 2. Vytvorenie kolekcie
+        $collection = collect($data);
+
+        // 3. Zoradenie jednotlivých stĺpcov
+        $sortedFirstColumn = $collection->pluck(0)->sort()->values();
+        $sortedSecondColumn = $collection->pluck(1)->sort()->values();
+
+        // 4. Výpočet absolútneho rozdielu príslušných riadkov
+        $differences = $sortedFirstColumn->zip($sortedSecondColumn)
+            ->map(fn($pair) => abs($pair[0] - $pair[1]));
+
+        return $differences->sum();
     }
 }
