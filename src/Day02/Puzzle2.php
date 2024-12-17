@@ -18,69 +18,49 @@ class Puzzle2
 
         $countSafe = 0;
         foreach ($reports as $report) {
-            echo "-- Repor --\n";
-            $firstLevel = array_shift($report);
-            $order = $firstLevel < $report[0] ? "ASC" : "DESC";
-            $countSafe += $this->levelsCheck($firstLevel, $report, $order);
+            //echo "-- Repor --\n";
+    
+            if ($this->is_safe($report)) {
+                $countSafe++;
+                continue;
+            }
 
+            // for part 2, brute-force remove each number and see if safe
+            for ($i = 0; $i < count($report); $i++) {
+                $copy = $report;
+                unset($copy[$i]);
+                $copy = array_values($copy);
+                if ($this->is_safe($copy)) {
+                    $countSafe++;
+                    break;
+                }
+            }
             // echo "\n order:".$order." count:".$countSafe."\n";
         }
 
         return $countSafe;
     }
 
-    private function levelsCheck($firstLevel, array $report, $order, $depth = 0){
-        $safe = 1;
-        $prevLevel = $firstLevel;
-        foreach($report as $key => $level){
-            $currentOrder = $prevLevel < $level ? "ASC" : "DESC";
-            // Úrovne sa buď všetky zvyšujú , alebo všetky klesajú .
-            if($currentOrder !== $order){
-                if($depth < 1){
-                    $depth += 1;
-                    $updatedReport = $report;
-                    unset($updatedReport[$key]); // Odstráň aktuálny prvok
-                    $updatedReport = array_values($updatedReport); // Preindexuj pole
+    private function is_safe(array $numbers): bool
+    {
+        $diff_prev = 0;
+        for ($i = 1; $i < count($numbers); $i++) {
+            $diff = $numbers[$i] - $numbers[$i - 1];
 
-                    $safe = $this->levelsCheck($level, $updatedReport, $order, $depth);
-
-                    if($safe == 0){
-
-                        $updatedReport = $report;
-                        unset($updatedReport[$key - 1]); // Odstráň predchádzajúci prvok
-                        $updatedReport = array_values($updatedReport); // Preindexuj pole
-
-                        $safe = $this->levelsCheck($level, $updatedReport, $order, $depth);
-
-                    }
-
-                    echo "order:".$order." count:".count($report)." depth:" .$depth." safe: ".$safe." - order [".implode(",",$report)."] \n";
-                    break;
-                }else{
-                    $safe = 0;
-                    echo "order:".$order." count:".count($report)." depth:" .$depth." safe: ".$safe." - order-deph [".implode(",",$report)."] \n";
-                    break;
-                }
+            // diff must be between 1 and 3
+            if (abs($diff) < 1 || abs($diff) > 3) {
+                return false;
             }
-            // Akékoľvek dve susedné úrovne sa líšia najmenej o jednu a najviac o tri 
-            if(abs($firstLevel - $level) > 3 || $firstLevel === $level){
-                if($depth < 1){
-                    $updatedReport = $report;
-                    unset($updatedReport[$key]); // Odstráň aktuálny prvok
-                    $updatedReport = array_values($updatedReport); // Preindexuj pole
 
-                    $safe = $this->levelsCheck($level, $updatedReport, $order, $depth + 1);
-                    echo "order:".$order." count:".count($report)." depth:" .$depth." safe: ".$safe." - diff [".implode(",",$report)."] \n";
-                    break;
-                }else{
-                    $safe = 0;
-                    echo "order:".$order." count:".count($report)." depth:" .$depth." safe: ".$safe." - diff-deph [".implode(",",$report)."] \n";
-                    break;
-                }
+            // sign of each diff must match preceding diff
+            if ($i >= 2 && $diff > 0 != $diff_prev > 0) {
+                return false;
             }
-            $firstLevel = $level;
+
+            $diff_prev = $diff;
         }
-        echo "order:".$order." count:".count($report)." depth:" .$depth." safe: ".$safe." - ok [".implode(",",$report)."] \n";
-        return $safe;
+
+        return true;
     }
+
 }
